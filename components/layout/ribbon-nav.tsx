@@ -38,7 +38,7 @@ const mainNavItems = [
   { value: "orders", label: "Orders", icon: ShoppingCart, href: "/orders" },
   { value: "suppliers", label: "Suppliers", icon: Truck, href: "/suppliers" },
   { value: "settings", label: "Settings", icon: Settings, href: "/settings" },
-  { value: "shop", label: "View Shop", icon: ShoppingCart, href: "/shop" },
+  { value: "shop", label: "View Shop", icon: ShoppingCart, href: "/" },
 ];
 
 export function RibbonNav() {

@@ -60,13 +60,13 @@ export default function StoreLayout({
           <div>
             <nav className="hidden md:flex items-center gap-8">
               <Link
-                href="/shop"
+                href="/"
                 className="text-[#2C2C2C] text-[11px] tracking-[0.18em] uppercase hover:text-[#B8956A] transition-colors duration-300"
               >
                 Shop
               </Link>
               <Link
-                href="/shop"
+                href="/"
                 className="text-[#8C8477] text-[11px] tracking-[0.18em] uppercase hover:text-[#B8956A] transition-colors duration-300"
               >
                 Collections
@@ -92,7 +92,7 @@ export default function StoreLayout({
           </div>
 
           {/* Center: Logo */}
-          <Link href="/shop" className="flex justify-center items-center gap-3">
+          <Link href="/" className="flex justify-center items-center gap-3">
             <div className="h-px w-6 bg-[#B8956A] hidden sm:block" />
             <span className="font-serif text-xl md:text-2xl tracking-[0.25em] text-[#2C2C2C] uppercase">
               StockUp
@@ -118,14 +118,14 @@ export default function StoreLayout({
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-[#E8E4DE] bg-[#FDFBF7] px-5 py-8 space-y-5">
             <Link
-              href="/shop"
+              href="/"
               onClick={() => setMobileMenuOpen(false)}
               className="block text-[#2C2C2C] text-sm tracking-[0.12em] uppercase"
             >
               Shop
             </Link>
             <Link
-              href="/shop"
+              href="/"
               onClick={() => setMobileMenuOpen(false)}
               className="block text-[#8C8477] text-sm tracking-[0.12em] uppercase"
             >
@@ -181,19 +181,19 @@ export default function StoreLayout({
               </h4>
               <div className="space-y-3">
                 <Link
-                  href="/shop"
+                  href="/"
                   className="block text-sm text-[#FDFBF7]/50 hover:text-[#B8956A] transition-colors duration-300"
                 >
                   All Products
                 </Link>
                 <Link
-                  href="/shop"
+                  href="/"
                   className="block text-sm text-[#FDFBF7]/50 hover:text-[#B8956A] transition-colors duration-300"
                 >
                   New Arrivals
                 </Link>
                 <Link
-                  href="/shop"
+                  href="/"
                   className="block text-sm text-[#FDFBF7]/50 hover:text-[#B8956A] transition-colors duration-300"
                 >
                   Best Sellers
