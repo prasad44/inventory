@@ -207,7 +207,6 @@ export default function ShopPage() {
           {/* Heading */}
           <h1
             className="font-sans text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] text-[#2C2C2C] leading-[1.08] mb-8"
-            style={{ animationDelay: "120ms" }}
           >
             Thoughtfully
             <br />
@@ -217,16 +216,13 @@ export default function ShopPage() {
           {/* Subtitle */}
           <p
             className="text-[#8C8477] text-lg md:text-xl max-w-lg mx-auto mb-14 leading-relaxed"
-            style={{ animationDelay: "240ms" }}
           >
             Discover our collection of premium products, selected for
             exceptional quality and timeless design.
           </p>
 
           {/* CTA */}
-          <div
-            style={{ animationDelay: "360ms" }}
-          >
+          <div>
             <button
               onClick={scrollToProducts}
               className="group inline-flex items-center gap-3 bg-[#2C2C2C] text-[#FDFBF7] px-12 py-4.5 text-xs tracking-[0.22em] uppercase hover:bg-[#B8956A] transition-all duration-500"
@@ -239,7 +235,6 @@ export default function ShopPage() {
           {/* Bottom decorative element */}
           <div
             className="flex items-center justify-center gap-3 mt-16"
-            style={{ animationDelay: "500ms" }}
           >
             <div className="h-px w-6 bg-[#E8E4DE]" />
             <div className="h-1.5 w-1.5 rotate-45 border border-[#B8956A]/40" />
