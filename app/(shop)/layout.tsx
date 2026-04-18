@@ -1,21 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Playfair_Display, DM_Sans } from "next/font/google";
 import Link from "next/link";
 import { Menu, X, User } from "lucide-react";
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
-  display: "swap",
-});
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  variable: "--font-dm-sans",
-  display: "swap",
-});
 
 const marqueeItems = [
   "Free Shipping Over $50",
@@ -34,7 +21,7 @@ export default function StoreLayout({
 
   return (
     <div
-      className={`${playfair.variable} ${dmSans.variable} min-h-screen flex flex-col font-body`}
+      className="min-h-screen flex flex-col font-sans"
     >
       {/* ── Announcement Bar ── */}
       <div className="bg-[#1A1A1A] py-2.5 overflow-hidden">
@@ -94,7 +81,7 @@ export default function StoreLayout({
           {/* Center: Logo */}
           <Link href="/" className="flex justify-center items-center gap-3">
             <div className="h-px w-6 bg-[#B8956A] hidden sm:block" />
-            <span className="font-serif text-xl md:text-2xl tracking-[0.25em] text-[#2C2C2C] uppercase">
+            <span className="font-sans text-xl md:text-2xl tracking-[0.25em] text-[#2C2C2C] uppercase">
               StockUp
             </span>
             <div className="h-px w-6 bg-[#B8956A] hidden sm:block" />
@@ -160,7 +147,7 @@ export default function StoreLayout({
           <div className="text-center mb-14">
             <div className="flex items-center justify-center gap-4 mb-4">
               <div className="h-px w-8 bg-[#B8956A]/40" />
-              <span className="font-serif text-2xl tracking-[0.25em] uppercase">
+              <span className="font-sans text-2xl tracking-[0.25em] uppercase">
                 StockUp
               </span>
               <div className="h-px w-8 bg-[#B8956A]/40" />

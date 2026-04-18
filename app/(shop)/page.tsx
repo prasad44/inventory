@@ -143,14 +143,14 @@ export default function ShopPage() {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
         <div
-          className="max-w-md text-center px-6 animate-store-fade-in"
+          className="max-w-md text-center px-6"
         >
           <div className="flex items-center justify-center gap-4 mb-8">
             <div className="h-px w-10 bg-[#B8956A]" />
             <CheckCircle2 className="h-8 w-8 text-[#B8956A]" />
             <div className="h-px w-10 bg-[#B8956A]" />
           </div>
-          <h1 className="font-serif text-4xl md:text-5xl text-[#2C2C2C] mb-4">
+          <h1 className="font-sans text-4xl md:text-5xl text-[#2C2C2C] mb-4">
             Thank You
           </h1>
           <p className="text-[#8C8477] leading-relaxed mb-12">
@@ -195,7 +195,7 @@ export default function ShopPage() {
         <div className="relative text-center max-w-3xl px-6">
           {/* Decorative accent line */}
           <div
-            className="flex items-center justify-center gap-4 mb-12 animate-store-fade-in"
+            className="flex items-center justify-center gap-4 mb-12"
           >
             <div className="h-px w-14 bg-[#B8956A]" />
             <span className="text-[#B8956A] text-[10px] tracking-[0.4em] uppercase">
@@ -206,7 +206,7 @@ export default function ShopPage() {
 
           {/* Heading */}
           <h1
-            className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] text-[#2C2C2C] leading-[1.08] mb-8 animate-store-fade-in"
+            className="font-sans text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] text-[#2C2C2C] leading-[1.08] mb-8"
             style={{ animationDelay: "120ms" }}
           >
             Thoughtfully
@@ -216,7 +216,7 @@ export default function ShopPage() {
 
           {/* Subtitle */}
           <p
-            className="text-[#8C8477] text-lg md:text-xl max-w-lg mx-auto mb-14 leading-relaxed animate-store-fade-in"
+            className="text-[#8C8477] text-lg md:text-xl max-w-lg mx-auto mb-14 leading-relaxed"
             style={{ animationDelay: "240ms" }}
           >
             Discover our collection of premium products, selected for
@@ -225,7 +225,6 @@ export default function ShopPage() {
 
           {/* CTA */}
           <div
-            className="animate-store-fade-in"
             style={{ animationDelay: "360ms" }}
           >
             <button
@@ -239,7 +238,7 @@ export default function ShopPage() {
 
           {/* Bottom decorative element */}
           <div
-            className="flex items-center justify-center gap-3 mt-16 animate-store-fade-in"
+            className="flex items-center justify-center gap-3 mt-16"
             style={{ animationDelay: "500ms" }}
           >
             <div className="h-px w-6 bg-[#E8E4DE]" />
@@ -297,7 +296,7 @@ export default function ShopPage() {
             <span className="text-[#B8956A] text-[10px] tracking-[0.4em] uppercase">
               Explore
             </span>
-            <h2 className="font-serif text-3xl md:text-4xl text-[#2C2C2C] mt-3">
+            <h2 className="font-sans text-3xl md:text-4xl text-[#2C2C2C] mt-3">
               Our Collection
             </h2>
             <div className="flex items-center justify-center gap-4 mt-6">
@@ -363,7 +362,7 @@ export default function ShopPage() {
           ) : filteredProducts.length === 0 ? (
             <div className="text-center py-24">
               <Package className="h-14 w-14 mx-auto text-[#E8E4DE] mb-5" />
-              <p className="font-serif text-xl text-[#8C8477]">
+              <p className="font-sans text-xl text-[#8C8477]">
                 {searchQuery || activeCategory !== "all"
                   ? "No products match your criteria"
                   : "No products available yet"}
@@ -431,7 +430,7 @@ export default function ShopPage() {
 
                   {/* Product Info */}
                   <div className="space-y-1.5">
-                    <h3 className="font-serif text-[17px] text-[#2C2C2C] leading-snug">
+                    <h3 className="font-sans text-[17px] text-[#2C2C2C] leading-snug">
                       {product.name}
                     </h3>
                     {product.description && (
@@ -461,7 +460,7 @@ export default function ShopPage() {
                 <Truck className="h-5 w-5 text-[#B8956A]" />
               </div>
             </div>
-            <h3 className="font-serif text-lg text-[#2C2C2C] mb-2">
+            <h3 className="font-sans text-lg text-[#2C2C2C] mb-2">
               Free Shipping
             </h3>
             <p className="text-[#8C8477] text-sm leading-relaxed">
@@ -475,7 +474,7 @@ export default function ShopPage() {
                 <Shield className="h-5 w-5 text-[#B8956A]" />
               </div>
             </div>
-            <h3 className="font-serif text-lg text-[#2C2C2C] mb-2">
+            <h3 className="font-sans text-lg text-[#2C2C2C] mb-2">
               Quality Guarantee
             </h3>
             <p className="text-[#8C8477] text-sm leading-relaxed">
@@ -489,7 +488,7 @@ export default function ShopPage() {
                 <Headphones className="h-5 w-5 text-[#B8956A]" />
               </div>
             </div>
-            <h3 className="font-serif text-lg text-[#2C2C2C] mb-2">
+            <h3 className="font-sans text-lg text-[#2C2C2C] mb-2">
               Dedicated Support
             </h3>
             <p className="text-[#8C8477] text-sm leading-relaxed">
@@ -508,7 +507,7 @@ export default function ShopPage() {
           <span className="text-[#B8956A] text-[10px] tracking-[0.4em] uppercase">
             Newsletter
           </span>
-          <h2 className="font-serif text-3xl md:text-4xl text-[#FDFBF7] mt-3 mb-4">
+          <h2 className="font-sans text-3xl md:text-4xl text-[#FDFBF7] mt-3 mb-4">
             Stay in the Know
           </h2>
           <p className="text-[#FDFBF7]/35 text-sm mb-10 leading-relaxed">
@@ -571,7 +570,7 @@ export default function ShopPage() {
             <span className="text-[10px] tracking-[0.25em] uppercase text-[#8C8477] block mb-1">
               Your Bag
             </span>
-            <SheetTitle className="font-serif text-2xl text-[#2C2C2C] !font-normal">
+            <SheetTitle className="font-sans text-2xl text-[#2C2C2C] !font-normal">
               Shopping Bag ({cartCount})
             </SheetTitle>
           </SheetHeader>
@@ -582,7 +581,7 @@ export default function ShopPage() {
             {cart.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-24 text-center">
                 <ShoppingBag className="h-12 w-12 mb-4 text-[#E8E4DE]" />
-                <p className="font-serif text-lg text-[#8C8477]">
+                <p className="font-sans text-lg text-[#8C8477]">
                   Your bag is empty
                 </p>
                 <p className="text-sm mt-1.5 text-[#8C8477]/50">
@@ -612,7 +611,7 @@ export default function ShopPage() {
                     {/* Details */}
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start gap-2">
-                        <h3 className="font-serif text-sm text-[#2C2C2C] leading-snug">
+                        <h3 className="font-sans text-sm text-[#2C2C2C] leading-snug">
                           {item.product.name}
                         </h3>
                         <button
@@ -659,7 +658,7 @@ export default function ShopPage() {
                   <span className="text-[10px] tracking-[0.2em] uppercase text-[#8C8477]">
                     Subtotal
                   </span>
-                  <span className="font-serif text-xl text-[#2C2C2C]">
+                  <span className="font-sans text-xl text-[#2C2C2C]">
                     ${subtotal.toFixed(2)}
                   </span>
                 </div>
