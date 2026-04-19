@@ -27,7 +27,7 @@ export function CategoryMegaMenu() {
       <DropdownMenuContent align="start" className="w-56">
         {TOP_CATEGORIES.map((c) => (
           <DropdownMenuItem key={c.slug} asChild>
-            <Link href={`/c/${c.slug}`} className="cursor-pointer">
+            <Link href={`/c?cat=${c.slug}`} className="cursor-pointer">
               {c.name}
             </Link>
           </DropdownMenuItem>

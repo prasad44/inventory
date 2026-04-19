@@ -184,7 +184,7 @@ export function ShopSearchBar() {
                     {results!.products.map((p) => (
                       <li key={p.id}>
                         <Link
-                          href={`/p/${p.slug}`}
+                          href={`/p?slug=${p.slug}`}
                           onClick={() => setOpen(false)}
                           className="flex items-center gap-3 px-3 py-2 hover:bg-muted"
                         >
@@ -225,7 +225,7 @@ export function ShopSearchBar() {
                     {results!.categories.map((c) => (
                       <li key={c.id}>
                         <Link
-                          href={`/c/${c.slug}`}
+                          href={`/c?cat=${c.slug}`}
                           onClick={() => setOpen(false)}
                           className="block px-3 py-2 text-sm hover:bg-muted"
                         >
@@ -246,7 +246,7 @@ export function ShopSearchBar() {
                     {results!.brands.map((b) => (
                       <li key={b.id}>
                         <Link
-                          href={`/brand/${b.slug}`}
+                          href={`/brand?slug=${b.slug}`}
                           onClick={() => setOpen(false)}
                           className="block px-3 py-2 text-sm hover:bg-muted"
                         >

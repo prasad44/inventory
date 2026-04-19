@@ -24,7 +24,7 @@ export function CategoryTiles({ categories }: { categories: Category[] }) {
           return (
             <Link
               key={c.id}
-              href={`/c/${c.slug}`}
+              href={`/c?cat=${c.slug}`}
               className="group flex flex-col items-center justify-center gap-2 p-4 rounded-lg border border-border bg-card hover:border-primary hover:bg-primary/5 transition-colors"
             >
               <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/15 transition-colors">

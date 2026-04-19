@@ -88,7 +88,7 @@ export function CheckoutForm({ zones, prefillEmail, prefillName }: Props) {
       }
       const { order_id } = await res.json();
       window.dispatchEvent(new Event("cart:change"));
-      router.push(`/order/${order_id}`);
+      router.push(`/order?id=${order_id}`);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Checkout failed");
     } finally {

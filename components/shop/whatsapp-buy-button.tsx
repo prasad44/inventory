@@ -29,7 +29,7 @@ export function WhatsAppBuyButton({ product, qty, dealDiscountPct }: Props) {
       `Hi, I'd like to order:\n\n` +
       `${product.name} (Qty ${qty})\n` +
       `${formatLKR(total)}\n` +
-      `Link: ${origin}/p/${product.slug}\n\n` +
+      `Link: ${origin}/p?slug=${product.slug}\n\n` +
       `My details:\n` +
       `Name: \n` +
       `City: `;

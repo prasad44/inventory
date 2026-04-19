@@ -43,7 +43,7 @@ export async function ProductRail({ title, categorySlug, limit = 12, seeAllHref 
   const items = (products ?? []) as Product[];
   if (!items.length) return null;
 
-  const href = seeAllHref ?? `/c/${categorySlug}`;
+  const href = seeAllHref ?? `/c?cat=${categorySlug}`;
 
   return (
     <section className="max-w-7xl mx-auto px-4 mt-10">

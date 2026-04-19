@@ -13,10 +13,10 @@ export function ShopFooter() {
         <div>
           <h3 className="text-sm font-semibold mb-3">Shop</h3>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><Link href="/c/audio" className="hover:text-foreground">Audio</Link></li>
-            <li><Link href="/c/lighting" className="hover:text-foreground">Lighting</Link></li>
-            <li><Link href="/c/solar" className="hover:text-foreground">Solar</Link></li>
-            <li><Link href="/c/smart-home" className="hover:text-foreground">Smart Home</Link></li>
+            <li><Link href="/c?cat=audio" className="hover:text-foreground">Audio</Link></li>
+            <li><Link href="/c?cat=lighting" className="hover:text-foreground">Lighting</Link></li>
+            <li><Link href="/c?cat=solar" className="hover:text-foreground">Solar</Link></li>
+            <li><Link href="/c?cat=smart-home" className="hover:text-foreground">Smart Home</Link></li>
             <li><Link href="/deals" className="hover:text-foreground">Deals</Link></li>
           </ul>
         </div>

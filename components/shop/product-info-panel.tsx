@@ -50,7 +50,7 @@ export function ProductInfoPanel({ product, deal }: Props) {
     <div className="flex flex-col gap-4">
       {product.brand && (
         <Link
-          href={`/brand/${product.brand.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+          href={`/brand?slug=${product.brand.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
           className="text-xs uppercase tracking-wider text-muted-foreground hover:text-primary w-fit"
         >
           {product.brand}

@@ -1,17 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { notFound, useParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { notFound, useSearchParams } from "next/navigation";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import { GenericProductsBrowser } from "@/components/shop/generic-products-browser";
 import type { Brand } from "@/lib/types";
 
 export default function BrandPage() {
-  const { slug } = useParams<{ slug: string }>();
+  return (
+    <Suspense fallback={<Loading />}>
+      <BrandInner />
+    </Suspense>
+  );
+}
+
+function BrandInner() {
+  const searchParams = useSearchParams();
+  const slug = searchParams.get("slug") ?? "";
   const [brand, setBrand] = useState<Brand | null>(null);
   const [notFoundFlag, setNotFoundFlag] = useState(false);
 
   useEffect(() => {
+    if (!slug) {
+      setNotFoundFlag(true);
+      return;
+    }
     let alive = true;
     fetch(`/api/brand-page/${encodeURIComponent(slug)}`)
       .then(async (r) => {
@@ -59,10 +72,18 @@ export default function BrandPage() {
           />
         </>
       ) : (
-        <div className="h-64 grid place-items-center text-muted-foreground text-sm">
-          Loading...
-        </div>
+        <Loading inner />
       )}
     </div>
   );
+}
+
+function Loading({ inner = false }: { inner?: boolean }) {
+  const body = (
+    <div className="h-64 grid place-items-center text-muted-foreground text-sm">
+      Loading...
+    </div>
+  );
+  if (inner) return body;
+  return <div className="max-w-7xl mx-auto px-4 py-6">{body}</div>;
 }

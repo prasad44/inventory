@@ -17,7 +17,7 @@ export function FeaturedBrandsRow({ brands }: Props) {
         {brands.map((b) => (
           <Link
             key={b.id}
-            href={`/brand/${b.slug}`}
+            href={`/brand?slug=${b.slug}`}
             className="group shrink-0 min-w-[140px] h-16 px-6 flex items-center justify-center rounded-lg border border-border bg-card hover:border-primary hover:bg-primary/5 transition-colors"
           >
             {b.logo_url ? (

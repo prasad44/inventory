@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { notFound, useParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { notFound, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Check, Truck, Banknote, Building2 } from "lucide-react";
 import { formatLKR } from "@/lib/format";
@@ -32,11 +32,24 @@ interface OrderRow {
 }
 
 export default function OrderPage() {
-  const { id } = useParams<{ id: string }>();
+  return (
+    <Suspense fallback={<Loading />}>
+      <OrderInner />
+    </Suspense>
+  );
+}
+
+function OrderInner() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id") ?? "";
   const [order, setOrder] = useState<OrderRow | null>(null);
   const [notFoundFlag, setNotFoundFlag] = useState(false);
 
   useEffect(() => {
+    if (!id) {
+      setNotFoundFlag(true);
+      return;
+    }
     let alive = true;
     fetch(`/api/order/${encodeURIComponent(id)}`)
       .then(async (r) => {
@@ -59,19 +72,10 @@ export default function OrderPage() {
 
   if (notFoundFlag) notFound();
 
-  if (!order) {
-    return (
-      <div className="max-w-3xl mx-auto px-4 py-6">
-        <div className="h-32 grid place-items-center text-muted-foreground text-sm">
-          Loading your order...
-        </div>
-      </div>
-    );
-  }
+  if (!order) return <Loading />;
 
   const subtotal = order.items.reduce((s, i) => s + i.unit_price * i.quantity, 0);
   const total = subtotal + (Number(order.delivery_fee) || 0);
-
   const shortId = order.id.slice(0, 8).toUpperCase();
   const orderRef = `ORDER-${shortId}`;
 
@@ -164,9 +168,8 @@ export default function OrderPage() {
             How to pay
           </h2>
           <p className="text-sm mb-3">
-            Please transfer{" "}
-            <span className="font-bold">{formatLKR(total)}</span> to the following
-            account. Use <span className="font-mono">{orderRef}</span> as the reference.
+            Please transfer <span className="font-bold">{formatLKR(total)}</span> to the
+            following account. Use <span className="font-mono">{orderRef}</span> as the reference.
           </p>
           <dl className="text-sm space-y-1.5 bg-card rounded-md p-4 border border-border">
             <div className="flex justify-between gap-2">
@@ -177,9 +180,7 @@ export default function OrderPage() {
             </div>
             <div className="flex justify-between gap-2">
               <dt className="text-muted-foreground">Account name</dt>
-              <dd className="font-medium text-right">
-                {STORE_SETTINGS.bankAccountName}
-              </dd>
+              <dd className="font-medium text-right">{STORE_SETTINGS.bankAccountName}</dd>
             </div>
             <div className="flex justify-between gap-2">
               <dt className="text-muted-foreground">Account number</dt>
@@ -209,8 +210,8 @@ export default function OrderPage() {
             Cash on delivery
           </h2>
           <p className="text-sm">
-            You&apos;ll pay <span className="font-bold">{formatLKR(total)}</span> in
-            cash when your order is delivered.
+            You&apos;ll pay <span className="font-bold">{formatLKR(total)}</span> in cash
+            when your order is delivered.
           </p>
         </section>
       )}
@@ -222,6 +223,16 @@ export default function OrderPage() {
         >
           Continue shopping
         </Link>
+      </div>
+    </div>
+  );
+}
+
+function Loading() {
+  return (
+    <div className="max-w-3xl mx-auto px-4 py-6">
+      <div className="h-32 grid place-items-center text-muted-foreground text-sm">
+        Loading your order...
       </div>
     </div>
   );

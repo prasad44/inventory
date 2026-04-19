@@ -22,7 +22,7 @@ export function ProductCard({ product, dealDiscountPct, topRight }: Props) {
 
   return (
     <Link
-      href={`/p/${product.slug}`}
+      href={`/p?slug=${product.slug}`}
       className="group relative flex flex-col rounded-lg border border-border bg-card overflow-hidden hover:border-primary/50 hover:shadow-sm transition-all"
     >
       <div className="relative aspect-square bg-muted/40 overflow-hidden">

@@ -60,7 +60,7 @@ export function CartItemRow({ line, onUpdateQty, onRemove, variant = "page" }: P
   return (
     <div className="flex gap-3 py-3">
       <Link
-        href={`/p/${product.slug}`}
+        href={`/p?slug=${product.slug}`}
         className={`shrink-0 rounded-md overflow-hidden bg-muted ${variant === "drawer" ? "w-16 h-16" : "w-24 h-24"}`}
       >
         {img ? (
@@ -73,7 +73,7 @@ export function CartItemRow({ line, onUpdateQty, onRemove, variant = "page" }: P
           <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{product.brand}</div>
         )}
         <Link
-          href={`/p/${product.slug}`}
+          href={`/p?slug=${product.slug}`}
           className={`font-medium text-sm hover:text-primary line-clamp-2 ${variant === "drawer" ? "" : "md:text-base"}`}
         >
           {product.name}

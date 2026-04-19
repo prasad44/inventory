@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { notFound, useParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { notFound, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import { ProductGallery } from "@/components/shop/product-gallery";
 import { ProductInfoPanel } from "@/components/shop/product-info-panel";
@@ -10,8 +12,6 @@ import { SolarCalculator } from "@/components/shop/solar-calculator";
 import { LedTempPreview } from "@/components/shop/led-temp-preview";
 import { RecentlyViewedTracker } from "@/components/shop/recently-viewed-tracker";
 import { ProductCard } from "@/components/shop/product-card";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import type { Product, Category, FlashDeal, Review } from "@/lib/types";
 
 interface Payload {
@@ -23,11 +23,24 @@ interface Payload {
 }
 
 export default function ProductPage() {
-  const { slug } = useParams<{ slug: string }>();
+  return (
+    <Suspense fallback={<SkeletonShell />}>
+      <ProductInner />
+    </Suspense>
+  );
+}
+
+function ProductInner() {
+  const searchParams = useSearchParams();
+  const slug = searchParams.get("slug") ?? "";
   const [data, setData] = useState<Payload | null>(null);
   const [notFoundFlag, setNotFoundFlag] = useState(false);
 
   useEffect(() => {
+    if (!slug) {
+      setNotFoundFlag(true);
+      return;
+    }
     let alive = true;
     fetch(`/api/product-page/${encodeURIComponent(slug)}`)
       .then(async (r) => {
@@ -41,7 +54,6 @@ export default function ProductPage() {
       .then((j) => {
         if (!alive || !j) return;
         setData(j as Payload);
-        // Update document title for SEO/UX (basic client-side)
         const title = (j.product as Product).meta_title ?? `${(j.product as Product).name} | VoltHub`;
         document.title = title;
       })
@@ -52,23 +64,7 @@ export default function ProductPage() {
   }, [slug]);
 
   if (notFoundFlag) notFound();
-
-  if (!data) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="h-6 w-48 bg-muted rounded animate-pulse mb-4" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10">
-          <div className="aspect-square bg-muted rounded-lg animate-pulse" />
-          <div className="space-y-3">
-            <div className="h-8 w-3/4 bg-muted rounded animate-pulse" />
-            <div className="h-4 w-1/2 bg-muted rounded animate-pulse" />
-            <div className="h-12 w-1/3 bg-muted rounded animate-pulse" />
-            <div className="h-24 w-full bg-muted rounded animate-pulse" />
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (!data) return <SkeletonShell />;
 
   const { product, parent, deal, reviews, recommendations } = data;
   const category = product.category ?? null;
@@ -76,13 +72,13 @@ export default function ProductPage() {
   const crumbs: { label: string; href?: string }[] = [{ label: "Home", href: "/" }];
   if (category) {
     if (category.parent_id && parent) {
-      crumbs.push({ label: parent.name, href: `/c/${parent.slug}` });
+      crumbs.push({ label: parent.name, href: `/c?cat=${parent.slug}` });
       crumbs.push({
         label: category.name,
-        href: `/c/${parent.slug}/${category.slug}`,
+        href: `/c?cat=${category.slug}&parent=${parent.slug}`,
       });
     } else {
-      crumbs.push({ label: category.name, href: `/c/${category.slug}` });
+      crumbs.push({ label: category.name, href: `/c?cat=${category.slug}` });
     }
   }
   crumbs.push({ label: product.name });
@@ -122,6 +118,23 @@ export default function ProductPage() {
           </div>
         </section>
       )}
+    </div>
+  );
+}
+
+function SkeletonShell() {
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="h-6 w-48 bg-muted rounded animate-pulse mb-4" />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10">
+        <div className="aspect-square bg-muted rounded-lg animate-pulse" />
+        <div className="space-y-3">
+          <div className="h-8 w-3/4 bg-muted rounded animate-pulse" />
+          <div className="h-4 w-1/2 bg-muted rounded animate-pulse" />
+          <div className="h-12 w-1/3 bg-muted rounded animate-pulse" />
+          <div className="h-24 w-full bg-muted rounded animate-pulse" />
+        </div>
+      </div>
     </div>
   );
 }

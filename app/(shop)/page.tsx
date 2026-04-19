@@ -104,9 +104,9 @@ export default function HomePage() {
 
       <FeaturedBrandsRow brands={feed?.brands ?? []} />
 
-      <Rail title="Trending in Audio" href="/c/audio" items={feed?.trendingAudio ?? null} />
-      <Rail title="Trending in Lighting" href="/c/lighting" items={feed?.trendingLighting ?? null} />
-      <Rail title="Shop solar" href="/c/solar" items={feed?.trendingSolar ?? null} />
+      <Rail title="Trending in Audio" href="/c?cat=audio" items={feed?.trendingAudio ?? null} />
+      <Rail title="Trending in Lighting" href="/c?cat=lighting" items={feed?.trendingLighting ?? null} />
+      <Rail title="Shop solar" href="/c?cat=solar" items={feed?.trendingSolar ?? null} />
 
       <RecentlyViewedRail />
       <ValuePropsStrip />

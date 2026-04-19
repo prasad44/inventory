@@ -96,7 +96,7 @@ export function FiltersRail({ childrenCategories, availableBrands }: Props) {
             {childrenCategories.map((c) => (
               <li key={c.id}>
                 <Link
-                  href={`/c/${parentSlug}/${c.slug}`}
+                  href={`/c?cat=${c.slug}&parent=${parentSlug}`}
                   className="text-muted-foreground hover:text-primary"
                 >
                   {c.name}
