@@ -6,14 +6,17 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
+  // Only run middleware on routes that actually need auth gating.
+  // Admin pages are the only ones requiring session checks; everything else
+  // is public or handles auth in the API handler itself. Keeping middleware
+  // narrow avoids a class of Vercel function hangs on dynamic shop segments.
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder files
-     */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/dashboard/:path*",
+    "/inventory/:path*",
+    "/orders/:path*",
+    "/pos/:path*",
+    "/settings/:path*",
+    "/suppliers/:path*",
+    "/login",
   ],
 };
