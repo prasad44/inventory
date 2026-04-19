@@ -11,6 +11,7 @@ import { DeliveryEstimator } from "@/components/shop/delivery-estimator";
 import { StockPriceAlerts } from "@/components/shop/stock-price-alerts";
 import { WishlistIconButton } from "@/components/shop/wishlist-icon-button";
 import { CompareIconButton } from "@/components/shop/compare-icon-button";
+import { useCart } from "@/lib/hooks/use-cart";
 
 interface Props {
   product: Product;
@@ -26,14 +27,23 @@ export function ProductInfoPanel({ product, deal }: Props) {
   const lowStock = !outOfStock && product.quantity_in_stock < 5;
 
   const [qty, setQty] = useState(1);
+  const { add } = useCart();
+  const [adding, setAdding] = useState(false);
 
   function adjust(delta: number) {
     setQty((q) => Math.max(1, Math.min(product.quantity_in_stock, q + delta)));
   }
 
-  function addToCart() {
-    // Phase 5 wires persistence. For now, just confirm the action.
-    toast.success(`${product.name} added to cart (cart coming soon)`);
+  async function addToCart() {
+    setAdding(true);
+    try {
+      await add(product.id, qty);
+      toast.success(`Added ${product.name} to cart`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not add to cart");
+    } finally {
+      setAdding(false);
+    }
   }
 
   return (
@@ -115,10 +125,11 @@ export function ProductInfoPanel({ product, deal }: Props) {
           <button
             type="button"
             onClick={addToCart}
-            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"
+            disabled={adding}
+            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 disabled:opacity-50"
           >
             <ShoppingBag className="h-4 w-4" />
-            Add to cart
+            {adding ? "Adding..." : "Add to cart"}
           </button>
         </div>
       )}
