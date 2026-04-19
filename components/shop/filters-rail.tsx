@@ -80,8 +80,8 @@ export function FiltersRail({ childrenCategories, availableBrands }: Props) {
 
   const hasAny =
     brandCsv ||
-    minPrice ||
-    maxPrice ||
+    urlMin ||
+    urlMax ||
     onSale ||
     inStock ||
     minRating;
