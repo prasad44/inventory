@@ -4,6 +4,8 @@ import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import { ProductGallery } from "@/components/shop/product-gallery";
 import { ProductInfoPanel } from "@/components/shop/product-info-panel";
 import { ProductTabs } from "@/components/shop/product-tabs";
+import { SolarCalculator } from "@/components/shop/solar-calculator";
+import { LedTempPreview } from "@/components/shop/led-temp-preview";
 import type { Product, Category, FlashDeal, Review } from "@/lib/types";
 
 export default async function ProductPage({
@@ -41,17 +43,22 @@ export default async function ProductPage({
   const crumbs: { label: string; href?: string }[] = [{ label: "Home", href: "/" }];
   const category = (product.category ?? null) as (Category & { parent_id: string | null }) | null;
 
+  // Fetch parent category once — used for both breadcrumbs and solar detection
+  let parentCategory: { name: string; slug: string } | null = null;
+  if (category?.parent_id) {
+    const { data } = await supabase
+      .from("categories")
+      .select("name, slug")
+      .eq("id", category.parent_id)
+      .maybeSingle();
+    parentCategory = data;
+  }
+
   if (category) {
     if (category.parent_id) {
-      // Sub-category: fetch parent for crumbs
-      const { data: parent } = await supabase
-        .from("categories")
-        .select("name, slug")
-        .eq("id", category.parent_id)
-        .maybeSingle();
-      if (parent) {
-        crumbs.push({ label: parent.name, href: `/c/${parent.slug}` });
-        crumbs.push({ label: category.name, href: `/c/${parent.slug}/${category.slug}` });
+      if (parentCategory) {
+        crumbs.push({ label: parentCategory.name, href: `/c/${parentCategory.slug}` });
+        crumbs.push({ label: category.name, href: `/c/${parentCategory.slug}/${category.slug}` });
       } else {
         crumbs.push({ label: category.name, href: `/c/${category.slug}` });
       }
@@ -60,6 +67,8 @@ export default async function ProductPage({
     }
   }
   crumbs.push({ label: product.name });
+
+  const isSolarCategory = category?.slug === "solar" || parentCategory?.slug === "solar";
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
@@ -72,6 +81,8 @@ export default async function ProductPage({
         />
       </div>
       <ProductTabs product={product as Product} reviews={(reviewsRes.data ?? []) as Review[]} />
+      {isSolarCategory && <SolarCalculator product={product as Product} />}
+      <LedTempPreview product={product as Product} />
     </div>
   );
 }
