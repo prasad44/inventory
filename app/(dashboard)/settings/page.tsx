@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { CategoryList } from "@/components/categories/category-list";
+import { StoreSettingsForm } from "@/components/settings/store-settings-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCurrentUser } from "@/lib/hooks/use-current-user";
 import { Users, FileText } from "lucide-react";
@@ -9,6 +10,7 @@ import { Users, FileText } from "lucide-react";
 export default function SettingsPage() {
   const { profile } = useCurrentUser();
   const isAdmin = profile?.role === "admin";
+  const isManagerOrAdmin = profile?.role === "admin" || profile?.role === "manager";
 
   return (
     <div className="space-y-6">
@@ -43,6 +45,8 @@ export default function SettingsPage() {
           </Link>
         </div>
       )}
+
+      {isManagerOrAdmin && <StoreSettingsForm />}
 
       <CategoryList />
     </div>
