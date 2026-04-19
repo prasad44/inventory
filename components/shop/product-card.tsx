@@ -73,6 +73,9 @@ export function ProductCard({ product, dealDiscountPct, topRight }: Props) {
             </span>
           )}
         </div>
+        {hasDiscount && (
+          <span className="text-[11px] text-success">Save {formatLKR(savings)}</span>
+        )}
         {lowStock && (
           <span className="text-[11px] text-destructive">Only {product.quantity_in_stock} left</span>
         )}
