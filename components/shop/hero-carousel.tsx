@@ -22,7 +22,7 @@ const SLIDES: Slide[] = [
   },
   {
     eyebrow: "New in solar",
-    title: "Power your home from the sun",
+    title: "Power from the sun",
     sub: "Panels, garden lights, and street lights — built for Sri Lankan weather.",
     cta: { label: "Explore solar", href: "/c?cat=solar" },
     image:
@@ -84,7 +84,7 @@ export function HeroCarousel() {
             className="shrink-0 w-full snap-start px-4"
             aria-hidden={activeIndex !== i}
           >
-            <div className="relative max-w-7xl mx-auto my-4 rounded-lg border border-border overflow-hidden">
+            <div className="relative max-w-7xl mx-auto my-4 rounded-lg border border-border overflow-hidden min-h-[360px] md:min-h-[420px]">
               {/* Background image */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
