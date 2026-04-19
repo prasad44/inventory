@@ -8,6 +8,9 @@ import { SolarCalculator } from "@/components/shop/solar-calculator";
 import { LedTempPreview } from "@/components/shop/led-temp-preview";
 import { RecentlyViewedTracker } from "@/components/shop/recently-viewed-tracker";
 import { RecommendationsRail } from "@/components/shop/recommendations-rail";
+
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 import type { Product, Category, FlashDeal, Review } from "@/lib/types";
 
 export default async function ProductPage({

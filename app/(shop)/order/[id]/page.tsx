@@ -7,6 +7,9 @@ import { STORE_SETTINGS } from "@/lib/settings";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import type { Product } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
+
 interface OrderRow {
   id: string;
   type: string;

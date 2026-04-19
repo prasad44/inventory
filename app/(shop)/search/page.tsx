@@ -2,6 +2,9 @@ import { createClient } from "@/lib/supabase/server";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import { GenericProductsBrowser } from "@/components/shop/generic-products-browser";
 
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
+
 export default async function SearchPage({
   searchParams,
 }: {

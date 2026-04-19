@@ -4,6 +4,9 @@ import { CategoryBrowser } from "@/components/shop/category-browser";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import type { Category } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
+
 export default async function CategoryPage({
   params,
 }: {

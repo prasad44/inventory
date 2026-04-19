@@ -8,6 +8,9 @@ import { ValuePropsStrip } from "@/components/shop/value-props-strip";
 import { createClient } from "@/lib/supabase/server";
 import type { Category } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
+
 export default async function HomePage() {
   const supabase = await createClient();
   const { data: topCategories } = await supabase

@@ -5,6 +5,9 @@ import { createClient } from "@/lib/supabase/server";
 import { ProductCard } from "@/components/shop/product-card";
 import type { Product } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
+
 export default async function ComparePage({
   searchParams,
 }: {

@@ -3,6 +3,9 @@ import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import { CheckoutForm } from "@/components/shop/checkout-form";
 import type { DeliveryZone } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
+
 export default async function CheckoutPage() {
   const supabase = await createClient();
 
