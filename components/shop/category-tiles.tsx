@@ -18,7 +18,7 @@ function resolveIcon(name: string | null): React.ComponentType<{ className?: str
 export function CategoryTiles({ categories }: { categories: Category[] }) {
   return (
     <section className="max-w-7xl mx-auto px-4 mt-4">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-3">
         {categories.map((c) => {
           const Icon = resolveIcon(c.icon);
           return (

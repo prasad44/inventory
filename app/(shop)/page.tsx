@@ -58,8 +58,8 @@ export default function HomePage() {
         <CategoryTiles categories={feed.topCategories} />
       ) : (
         <div className="max-w-7xl mx-auto px-4 mt-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-            {Array.from({ length: 6 }).map((_, i) => (
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-3">
+            {Array.from({ length: 7 }).map((_, i) => (
               <div key={i} className="h-24 rounded-lg bg-muted animate-pulse" />
             ))}
           </div>
