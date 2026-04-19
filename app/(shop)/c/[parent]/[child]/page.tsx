@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicServerClient } from "@/lib/supabase/public-server";
 import { CategoryBrowser } from "@/components/shop/category-browser";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import type { Category } from "@/lib/types";
@@ -13,7 +13,7 @@ export default async function SubCategoryPage({
   params: Promise<{ parent: string; child: string }>;
 }) {
   const { parent: parentSlug, child: childSlug } = await params;
-  const supabase = await createClient();
+  const supabase = createPublicServerClient();
 
   const { data: parent } = await supabase
     .from("categories")

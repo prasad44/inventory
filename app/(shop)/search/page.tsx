@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createPublicServerClient } from "@/lib/supabase/public-server";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import { GenericProductsBrowser } from "@/components/shop/generic-products-browser";
 
@@ -11,7 +11,7 @@ export default async function SearchPage({
   searchParams: Promise<{ q?: string }>;
 }) {
   const { q } = await searchParams;
-  const supabase = await createClient();
+  const supabase = createPublicServerClient();
 
   // Build brand list from products that match the current q (best-effort;
   // keeps the filter rail useful when refining a search).

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicServerClient } from "@/lib/supabase/public-server";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import { GenericProductsBrowser } from "@/components/shop/generic-products-browser";
 
@@ -12,7 +12,7 @@ export default async function BrandPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const supabase = await createClient();
+  const supabase = createPublicServerClient();
 
   const { data: brand } = await supabase
     .from("brands")

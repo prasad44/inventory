@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { GitCompare } from "lucide-react";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicServerClient } from "@/lib/supabase/public-server";
 import { ProductCard } from "@/components/shop/product-card";
 import type { Product } from "@/lib/types";
 
@@ -22,7 +22,7 @@ export default async function ComparePage({
 
   let products: Product[] = [];
   if (ids.length > 0) {
-    const supabase = await createClient();
+    const supabase = createPublicServerClient();
     const { data } = await supabase
       .from("products")
       .select("*")

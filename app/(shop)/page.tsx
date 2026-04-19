@@ -5,14 +5,14 @@ import { FeaturedBrandsRow } from "@/components/shop/featured-brands-row";
 import { ProductRail } from "@/components/shop/product-rail";
 import { RecentlyViewedRail } from "@/components/shop/recently-viewed-rail";
 import { ValuePropsStrip } from "@/components/shop/value-props-strip";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicServerClient } from "@/lib/supabase/public-server";
 import type { Category } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
 export default async function HomePage() {
-  const supabase = await createClient();
+  const supabase = createPublicServerClient();
   const { data: topCategories } = await supabase
     .from("categories")
     .select("*")

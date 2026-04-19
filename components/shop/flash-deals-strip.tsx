@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createPublicServerClient } from "@/lib/supabase/public-server";
 import Link from "next/link";
 import { Flame, ArrowRight } from "lucide-react";
 import { ProductCard } from "@/components/shop/product-card";
@@ -14,7 +14,7 @@ interface DealRow {
 }
 
 export async function FlashDealsStrip() {
-  const supabase = await createClient();
+  const supabase = createPublicServerClient();
   const { data } = await supabase
     .from("active_flash_deals")
     .select("id, product_id, discount_pct, ends_at, product:products(*)")

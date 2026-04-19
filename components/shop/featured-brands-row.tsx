@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicServerClient } from "@/lib/supabase/public-server";
 import type { Brand } from "@/lib/types";
 
 export async function FeaturedBrandsRow() {
-  const supabase = await createClient();
+  const supabase = createPublicServerClient();
   const { data } = await supabase
     .from("brands")
     .select("id, name, slug, logo_url")

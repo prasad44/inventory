@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicServerClient } from "@/lib/supabase/public-server";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import { ProductGallery } from "@/components/shop/product-gallery";
 import { ProductInfoPanel } from "@/components/shop/product-info-panel";
@@ -19,7 +19,7 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const supabase = await createClient();
+  const supabase = createPublicServerClient();
 
   const { data: product } = await supabase
     .from("products")
@@ -100,7 +100,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const supabase = await createClient();
+  const supabase = createPublicServerClient();
   const { data } = await supabase
     .from("products")
     .select("name, meta_title, meta_desc, images, image_url")

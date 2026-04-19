@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicServerClient } from "@/lib/supabase/public-server";
 import { CategoryBrowser } from "@/components/shop/category-browser";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import type { Category } from "@/lib/types";
@@ -13,7 +13,7 @@ export default async function CategoryPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const supabase = await createClient();
+  const supabase = createPublicServerClient();
 
   const { data: category } = await supabase
     .from("categories")
@@ -50,7 +50,7 @@ export default async function CategoryPage({
 }
 
 async function fetchBrandsForCategory(
-  supabase: Awaited<ReturnType<typeof createClient>>,
+  supabase: ReturnType<typeof createPublicServerClient>,
   categoryId: string
 ): Promise<string[]> {
   // Pull brands that actually appear in this category (or its children) for the filter list
