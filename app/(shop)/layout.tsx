@@ -1,6 +1,7 @@
 import { AnnouncementBar } from "@/components/shop/announcement-bar";
 import { ShopHeader } from "@/components/shop/shop-header";
 import { ShopFooter } from "@/components/shop/shop-footer";
+import { CompareFloatingPill } from "@/components/shop/compare-floating-pill";
 
 export default function ShopLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,6 +10,7 @@ export default function ShopLayout({ children }: { children: React.ReactNode }) 
       <ShopHeader />
       <main className="flex-1">{children}</main>
       <ShopFooter />
+      <CompareFloatingPill />
     </div>
   );
 }

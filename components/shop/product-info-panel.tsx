@@ -9,6 +9,8 @@ import { WarrantyBadges } from "@/components/shop/warranty-badges";
 import { WhatsAppBuyButton } from "@/components/shop/whatsapp-buy-button";
 import { DeliveryEstimator } from "@/components/shop/delivery-estimator";
 import { StockPriceAlerts } from "@/components/shop/stock-price-alerts";
+import { WishlistIconButton } from "@/components/shop/wishlist-icon-button";
+import { CompareIconButton } from "@/components/shop/compare-icon-button";
 
 interface Props {
   product: Product;
@@ -126,7 +128,10 @@ export function ProductInfoPanel({ product, deal }: Props) {
       )}
 
       <StockPriceAlerts product={product} />
-      {/* Phase 4D: <WishlistIconButton productId={product.id} /> <CompareIconButton productId={product.id} /> */}
+      <div className="flex items-center gap-2">
+        <WishlistIconButton productId={product.id} />
+        <CompareIconButton productId={product.id} />
+      </div>
     </div>
   );
 }

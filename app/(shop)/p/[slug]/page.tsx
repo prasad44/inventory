@@ -6,6 +6,8 @@ import { ProductInfoPanel } from "@/components/shop/product-info-panel";
 import { ProductTabs } from "@/components/shop/product-tabs";
 import { SolarCalculator } from "@/components/shop/solar-calculator";
 import { LedTempPreview } from "@/components/shop/led-temp-preview";
+import { RecentlyViewedTracker } from "@/components/shop/recently-viewed-tracker";
+import { RecommendationsRail } from "@/components/shop/recommendations-rail";
 import type { Product, Category, FlashDeal, Review } from "@/lib/types";
 
 export default async function ProductPage({
@@ -72,6 +74,7 @@ export default async function ProductPage({
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
+      <RecentlyViewedTracker productId={product.id} />
       <Breadcrumbs items={crumbs} className="mb-4" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10">
         <ProductGallery product={product as Product} />
@@ -83,6 +86,7 @@ export default async function ProductPage({
       <ProductTabs product={product as Product} reviews={(reviewsRes.data ?? []) as Review[]} />
       {isSolarCategory && <SolarCalculator product={product as Product} />}
       <LedTempPreview product={product as Product} />
+      <RecommendationsRail productId={product.id} />
     </div>
   );
 }
