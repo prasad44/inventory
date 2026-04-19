@@ -3,35 +3,46 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 
-const SLIDES = [
+interface Slide {
+  eyebrow: string;
+  title: string;
+  sub: string;
+  cta: { label: string; href: string };
+  image: string;
+}
+
+const SLIDES: Slide[] = [
   {
     eyebrow: "Flash deals",
     title: "Up to 25% off audio",
     sub: "JBL, Sony, Bose — limited-time pricing.",
     cta: { label: "Shop deals", href: "/deals" },
-    // Soft violet gradient background, no image needed for MVP
-    bg: "bg-gradient-to-br from-primary/15 via-primary/5 to-transparent",
+    image:
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=2000&q=75&auto=format&fit=crop",
   },
   {
     eyebrow: "New in solar",
     title: "Power your home from the sun",
     sub: "Panels, garden lights, and street lights — built for Sri Lankan weather.",
-    cta: { label: "Explore solar", href: "/c/solar" },
-    bg: "bg-gradient-to-br from-warning/20 via-warning/5 to-transparent",
+    cta: { label: "Explore solar", href: "/c?cat=solar" },
+    image:
+      "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=2000&q=75&auto=format&fit=crop",
   },
   {
     eyebrow: "Best sellers",
     title: "Headsets under Rs 20,000",
     sub: "Proven favorites, trusted by thousands of shoppers.",
-    cta: { label: "Shop headphones", href: "/c/audio/headphones" },
-    bg: "bg-gradient-to-br from-success/15 via-success/5 to-transparent",
+    cta: { label: "Shop headphones", href: "/c?cat=headphones&parent=audio" },
+    image:
+      "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=2000&q=75&auto=format&fit=crop",
   },
   {
     eyebrow: "Free delivery",
     title: "Islandwide, over Rs 5,000",
     sub: "Colombo in 1-2 days. Jaffna in 4-6. COD on every order.",
-    cta: { label: "Start shopping", href: "/c/audio" },
-    bg: "bg-gradient-to-br from-destructive/15 via-destructive/5 to-transparent",
+    cta: { label: "Start shopping", href: "/c?cat=audio" },
+    image:
+      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=2000&q=75&auto=format&fit=crop",
   },
 ];
 
@@ -70,24 +81,43 @@ export function HeroCarousel() {
         {SLIDES.map((s, i) => (
           <div
             key={i}
-            className={`shrink-0 w-full snap-start px-4`}
+            className="shrink-0 w-full snap-start px-4"
             aria-hidden={activeIndex !== i}
           >
-            <div className={`max-w-7xl mx-auto my-4 rounded-lg ${s.bg} border border-border px-8 py-16 md:py-24`}>
-              <span className="text-xs uppercase tracking-[0.2em] text-primary font-semibold">
-                {s.eyebrow}
-              </span>
-              <h1 className="mt-3 font-display text-3xl md:text-5xl font-bold leading-tight max-w-2xl">
-                {s.title}
-              </h1>
-              <p className="mt-3 text-base md:text-lg text-muted-foreground max-w-xl">{s.sub}</p>
-              <Link
-                href={s.cta.href}
-                className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
-              >
-                {s.cta.label}
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+            <div className="relative max-w-7xl mx-auto my-4 rounded-lg border border-border overflow-hidden">
+              {/* Background image */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={s.image}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-cover"
+                loading={i === 0 ? "eager" : "lazy"}
+              />
+              {/* Readability scrim: darker on the left where text sits, fades right */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/15"
+              />
+              {/* Content */}
+              <div className="relative px-8 py-16 md:py-24 text-white">
+                <span className="text-xs uppercase tracking-[0.2em] text-primary-foreground/90 font-semibold bg-primary/80 px-2 py-1 rounded-sm">
+                  {s.eyebrow}
+                </span>
+                <h1 className="mt-4 font-display text-3xl md:text-5xl font-bold leading-tight max-w-2xl text-white drop-shadow-sm">
+                  {s.title}
+                </h1>
+                <p className="mt-3 text-base md:text-lg text-white/80 max-w-xl drop-shadow-sm">
+                  {s.sub}
+                </p>
+                <Link
+                  href={s.cta.href}
+                  className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
+                >
+                  {s.cta.label}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
             </div>
           </div>
         ))}
