@@ -40,6 +40,14 @@ export const PUT = withAuth(async (request, { user, supabase, params }) => {
     .eq("id", id)
     .single();
 
+  // Derive slug if missing
+  const slugify = (s: string) =>
+    s.toLowerCase().replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  const slug =
+    typeof body.slug === "string" && body.slug.trim()
+      ? body.slug.trim()
+      : old?.slug || slugify(String(body.name || ""));
+
   const { data, error } = await supabase
     .from("products")
     .update({
@@ -56,6 +64,15 @@ export const PUT = withAuth(async (request, { user, supabase, params }) => {
       supplier_id: body.supplier_id || null,
       image_url: body.image_url || null,
       status: body.status || "active",
+      brand: body.brand || null,
+      slug,
+      discount_pct: Number(body.discount_pct) || 0,
+      warranty_months: Number(body.warranty_months) || 0,
+      is_genuine: body.is_genuine === undefined ? old?.is_genuine ?? true : !!body.is_genuine,
+      images: Array.isArray(body.images) ? body.images : old?.images ?? [],
+      specs: body.specs && typeof body.specs === "object" ? body.specs : old?.specs ?? {},
+      meta_title: body.meta_title || null,
+      meta_desc: body.meta_desc || null,
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)

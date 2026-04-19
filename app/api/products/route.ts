@@ -73,6 +73,14 @@ export const POST = withAuth(async (request, { user, supabase }) => {
     return NextResponse.json({ error: errors.join(", ") }, { status: 400 });
   }
 
+  // Derive slug if missing
+  const slugify = (s: string) =>
+    s.toLowerCase().replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  const slug =
+    typeof body.slug === "string" && body.slug.trim()
+      ? body.slug.trim()
+      : slugify(String(body.name || ""));
+
   const { data, error } = await supabase
     .from("products")
     .insert({
@@ -89,6 +97,15 @@ export const POST = withAuth(async (request, { user, supabase }) => {
       supplier_id: body.supplier_id || null,
       image_url: body.image_url || null,
       status: body.status || "active",
+      brand: body.brand || null,
+      slug,
+      discount_pct: Number(body.discount_pct) || 0,
+      warranty_months: Number(body.warranty_months) || 0,
+      is_genuine: body.is_genuine === undefined ? true : !!body.is_genuine,
+      images: Array.isArray(body.images) ? body.images : [],
+      specs: body.specs && typeof body.specs === "object" ? body.specs : {},
+      meta_title: body.meta_title || null,
+      meta_desc: body.meta_desc || null,
     })
     .select("*, category:categories(*), supplier:suppliers(*)")
     .single();
