@@ -5,6 +5,10 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { formatLKR, effectivePrice, savingsAmount } from "@/lib/format";
 import type { Product, FlashDeal } from "@/lib/types";
+import { WarrantyBadges } from "@/components/shop/warranty-badges";
+import { WhatsAppBuyButton } from "@/components/shop/whatsapp-buy-button";
+import { DeliveryEstimator } from "@/components/shop/delivery-estimator";
+import { StockPriceAlerts } from "@/components/shop/stock-price-alerts";
 
 interface Props {
   product: Product;
@@ -68,8 +72,8 @@ export function ProductInfoPanel({ product, deal }: Props) {
 
       <div className="h-px bg-border" />
 
-      {/* Phase 4B: <WarrantyBadges product={product} /> */}
-      {/* Phase 4B: <DeliveryEstimator product={product} /> */}
+      <WarrantyBadges product={product} />
+      <DeliveryEstimator subtotal={priceNow * qty} />
 
       <div className="text-sm">
         {outOfStock ? (
@@ -117,8 +121,11 @@ export function ProductInfoPanel({ product, deal }: Props) {
         </div>
       )}
 
-      {/* Phase 4B: <WhatsAppBuyButton product={product} qty={qty} /> */}
-      {/* Phase 4B: <StockPriceAlerts product={product} /> */}
+      {!outOfStock && (
+        <WhatsAppBuyButton product={product} qty={qty} dealDiscountPct={deal?.discount_pct} />
+      )}
+
+      <StockPriceAlerts product={product} />
       {/* Phase 4D: <WishlistIconButton productId={product.id} /> <CompareIconButton productId={product.id} /> */}
     </div>
   );
