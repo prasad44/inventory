@@ -1,16 +1,11 @@
 import Link from "next/link";
-import { createPublicServerClient } from "@/lib/supabase/public-server";
 import type { Brand } from "@/lib/types";
 
-export async function FeaturedBrandsRow() {
-  const supabase = createPublicServerClient();
-  const { data } = await supabase
-    .from("brands")
-    .select("id, name, slug, logo_url")
-    .eq("is_featured", true)
-    .order("sort_order");
+interface Props {
+  brands: Pick<Brand, "id" | "name" | "slug" | "logo_url">[];
+}
 
-  const brands = (data ?? []) as Pick<Brand, "id" | "name" | "slug" | "logo_url">[];
+export function FeaturedBrandsRow({ brands }: Props) {
   if (!brands.length) return null;
 
   return (
