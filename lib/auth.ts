@@ -24,7 +24,7 @@ type AuthenticatedHandler = (
 ) => Promise<NextResponse>;
 
 export function withAuth(handler: AuthenticatedHandler, requiredRole: Role = "viewer") {
-  return async (request: NextRequest, context?: { params?: Promise<Record<string, string>> }) => {
+  return async (request: NextRequest, context: { params: Promise<Record<string, string>> }) => {
     const supabase = await createClient();
 
     const {
