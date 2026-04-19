@@ -280,7 +280,7 @@ export default function POSPage() {
             ) : search.length >= 2 ? (
               <div className="flex flex-col items-center justify-center h-full py-12 text-muted-foreground">
                 <PackageSearch className="h-12 w-12 mb-4 opacity-20" />
-                <p>No products found matching "{search}"</p>
+                <p>No products found matching &quot;{search}&quot;</p>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center h-full py-12 text-muted-foreground">

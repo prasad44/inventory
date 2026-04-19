@@ -36,11 +36,13 @@ export function withAuth(handler: AuthenticatedHandler, requiredRole: Role = "vi
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    let { data: profile, error: profileError } = await supabase
+    const { data: existingProfile, error: profileError } = await supabase
       .from("profiles")
       .select("*")
       .eq("id", user.id)
       .single();
+
+    let profile = existingProfile;
 
     // Auto-create profile from user_metadata if missing
     if (profileError || !profile) {

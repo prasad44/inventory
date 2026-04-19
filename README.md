@@ -1,36 +1,149 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VoltHub — Electronics E-commerce
 
-## Getting Started
+Next.js + Supabase storefront for Sri Lankan electronics (JBL, Sony, Philips, Anker, Xiaomi, solar, lighting, smart home). Single-seller, guest-friendly checkout, COD + bank transfer.
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Next.js 15.5 (App Router, React 19)
+- TypeScript (strict)
+- Tailwind CSS v4 + shadcn/ui
+- Supabase (Postgres + Auth + Storage + RLS)
+- next-themes (dark/light)
+- Vitest for unit tests, Playwright for E2E
+
+## Prerequisites
+
+- Node.js 20+
+- A Supabase project (URL + anon key + service-role key)
+- Optional: WhatsApp number for the quick-buy button
+
+## Setup
+
+1. Clone + install
+
+   ```
+   git clone <repo>
+   cd inventory
+   npm install
+   ```
+
+2. Copy env template
+
+   ```
+   cp .env.example .env.local
+   ```
+
+   Fill in Supabase credentials (see `.env.example` for descriptions).
+
+3. Apply Supabase migrations
+
+   Either:
+   (a) `supabase db push` (if you have the Supabase CLI linked), or
+   (b) Apply each file under `supabase/migrations/` in order via the SQL editor.
+
+   Key migrations to check after the initial baseline (001–004):
+   - 010–018: electronics schema + RLS
+   - 020–024: seed data (delivery zones, categories, brands, products, deals, reviews, recommendations)
+   - 031: review-images storage bucket
+   - 032: alert DELETE RLS
+   - 033: store_settings singleton table
+
+4. Run dev
+
+   ```
+   npm run dev
+   ```
+
+   Open http://localhost:3000
+
+## Seed + admin account
+
+1. Sign up once at `/login` (creates a `profiles` row as `viewer`).
+2. Promote yourself to admin in the DB:
+
+   ```sql
+   update profiles set role = 'admin' where id = '<your user id>';
+   ```
+
+3. Admin pages live at `/dashboard`, `/inventory`, `/brands`, `/flash-deals`, `/reviews`, `/delivery-zones`, `/orders`, `/settings`.
+
+## Routes
+
+### Customer (public)
+
+- `/` — home
+- `/c?cat=audio` — category (query-param, see URL notes below)
+- `/p?slug=jbl-flip-6` — product detail
+- `/brand?slug=jbl` — brand page
+- `/search?q=jbl` — search results
+- `/compare?ids=a,b,c` — up to 4-product compare
+- `/cart` · `/checkout` · `/order?id=...`
+- `/account/*` — orders, wishlist, addresses, alerts, reviews, profile
+
+### Admin (auth + role=manager|admin)
+
+- `/dashboard` · `/inventory` · `/orders` · `/pos`
+- `/brands` · `/flash-deals` · `/reviews` · `/delivery-zones`
+- `/settings` — store-wide settings
+
+## URL notes (query-param routes)
+
+The customer-facing shop uses `?slug=`, `?cat=`, `?id=` query-param URLs instead of path segments (`/p/jbl-flip-6`). This is a workaround for a Vercel platform bug where dynamic route functions hang indefinitely for this project.
+
+When Vercel resolves that bug (or this project is moved off Vercel), it's a ~30-minute refactor to switch back to clean path URLs.
+
+## Scripts
+
+- `npm run dev` — dev server
+- `npm run build` — production build
+- `npm start` — production server
+- `npm run lint` — ESLint
+- `npm test` — unit tests (vitest)
+- `npm run test:watch` — vitest in watch mode
+- `npm run e2e` — Playwright E2E tests (see below)
+- `npm run e2e:ui` — Playwright UI runner
+
+## Tests
+
+### Unit
+
+Vitest covers pure helpers in `lib/` (format, delivery math, solar calculator, kelvin-to-rgb, cart merge, compare, countdown). 51 tests.
+
+### E2E
+
+Playwright covers a happy-path smoke: home → category → PDP → add to cart → checkout → order confirmation. See `e2e/` directory.
+
+First-time browser install (one-off):
+
+```
+npx playwright install chromium
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Run with a live dev server:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+npm run dev
+# separate terminal
+npm run e2e
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The smoke test hits real Supabase, so the DB needs the seed migrations applied.
 
-## Learn More
+## Deployment
 
-To learn more about Next.js, take a look at the following resources:
+Deployed to Vercel at https://pdinventory.vercel.app. Main branch auto-deploys.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Environment variables must be set in the Vercel dashboard (see `.env.example`). The Supabase service-role key is server-only and must NOT be exposed as `NEXT_PUBLIC_`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Known Vercel issue
 
-## Deploy on Vercel
+Dynamic route segments (`/[slug]`) hang indefinitely on this project. Shop pages use query-param URLs as a workaround. See URL notes above.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Project docs
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `docs/plans/2026-04-19-electronics-ecom-design.md` — approved design
+- `docs/plans/2026-04-19-electronics-ecom-implementation.md` — implementation plan
+
+## License
+
+Private project.

@@ -11,8 +11,30 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Inventory Control System",
-  description: "E-commerce inventory management system",
+  metadataBase: new URL("https://pdinventory.vercel.app"),
+  title: {
+    default: "VoltHub — Genuine electronics with islandwide delivery",
+    template: "%s · VoltHub",
+  },
+  description:
+    "Shop genuine JBL, Sony, Philips, Anker, Xiaomi and more. Islandwide delivery across Sri Lanka, cash on delivery, 12-month manufacturer warranty.",
+  keywords: [
+    "electronics Sri Lanka",
+    "JBL Sri Lanka",
+    "Sony headphones",
+    "LED lights",
+    "solar lights",
+    "islandwide delivery",
+    "cash on delivery",
+  ],
+  openGraph: {
+    type: "website",
+    siteName: "VoltHub",
+    locale: "en_LK",
+    title: "VoltHub — Genuine electronics",
+    description: "Genuine electronics. Islandwide delivery. COD available.",
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
