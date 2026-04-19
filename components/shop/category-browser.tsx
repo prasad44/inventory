@@ -2,6 +2,7 @@
 import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 import { FiltersRail } from "@/components/shop/filters-rail";
+import { MobileFiltersButton } from "@/components/shop/mobile-filters-button";
 import { SortDropdown } from "@/components/shop/sort-dropdown";
 import { ProductCard } from "@/components/shop/product-card";
 import { useInfiniteProducts } from "@/lib/hooks/use-infinite-products";
@@ -39,6 +40,11 @@ export function CategoryBrowser({ category, childrenCategories, availableBrands 
           availableBrands={availableBrands}
         />
       </div>
+
+      <MobileFiltersButton
+        childrenCategories={childrenCategories}
+        availableBrands={availableBrands}
+      />
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between gap-4 mb-4">
