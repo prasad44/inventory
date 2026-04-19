@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -20,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import { OrderWizard } from "./order-wizard";
 import { OrderDetail } from "./order-detail";
-import { Plus, Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Eye, ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
 import type { Order } from "@/lib/types";
 import { useCurrentUser } from "@/lib/hooks/use-current-user";
 
@@ -36,23 +37,42 @@ const statusBadgeVariant = {
   cancelled: "destructive" as const,
 };
 
+const paymentMethodOptions = [
+  { value: "all", label: "All Payments" },
+  { value: "cod", label: "COD" },
+  { value: "bank_transfer", label: "Bank Transfer" },
+  { value: "card", label: "Card" },
+];
+
 export function OrdersTable() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const [orders, setOrders] = useState<Order[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(20);
   const [typeFilter, setTypeFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [paymentMethodFilter, setPaymentMethodFilter] = useState(
+    searchParams.get("payment") === "bank_transfer"
+      ? "bank_transfer"
+      : searchParams.get("payment_method") ?? ""
+  );
   const [wizardOpen, setWizardOpen] = useState(false);
   const [detailOrder, setDetailOrder] = useState<Order | null>(null);
+  const [markingPaidId, setMarkingPaidId] = useState<string | null>(null);
   const { profile } = useCurrentUser();
 
   const canCreate = profile?.role === "admin" || profile?.role === "manager";
+  const canManagePayments = canCreate;
 
-  const reloadOrders = async () => {
+  const loadOrders = useCallback(async () => {
     const params = new URLSearchParams();
     if (typeFilter) params.set("type", typeFilter);
     if (statusFilter) params.set("status", statusFilter);
+    if (paymentMethodFilter) params.set("payment_method", paymentMethodFilter);
     params.set("page", String(page));
     params.set("pageSize", String(pageSize));
 
@@ -62,24 +82,43 @@ export function OrdersTable() {
       setOrders(json.data);
       setTotalCount(json.count ?? 0);
     }
-  };
+  }, [typeFilter, statusFilter, paymentMethodFilter, page, pageSize]);
 
   useEffect(() => {
-    const params = new URLSearchParams();
-    if (typeFilter) params.set("type", typeFilter);
-    if (statusFilter) params.set("status", statusFilter);
-    params.set("page", String(page));
-    params.set("pageSize", String(pageSize));
+    loadOrders();
+  }, [loadOrders]);
 
-    fetch(`/api/orders?${params}`)
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.data) {
-          setOrders(json.data);
-          setTotalCount(json.count ?? 0);
-        }
-      });
-  }, [typeFilter, statusFilter, page, pageSize]);
+  // Keep URL in sync with the payment_method filter so dashboard deep-links work
+  useEffect(() => {
+    const next = new URLSearchParams(searchParams.toString());
+    if (paymentMethodFilter) {
+      next.set("payment_method", paymentMethodFilter);
+    } else {
+      next.delete("payment_method");
+    }
+    next.delete("payment"); // legacy alias from dashboard link
+    const qs = next.toString();
+    const target = qs ? `${pathname}?${qs}` : pathname;
+    // Avoid redundant navigation loop.
+    const current =
+      searchParams.toString() === qs ? pathname : `${pathname}?${searchParams.toString()}`;
+    if (target !== current) {
+      router.replace(target, { scroll: false });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentMethodFilter]);
+
+  const markAsPaid = async (orderId: string) => {
+    setMarkingPaidId(orderId);
+    try {
+      const res = await fetch(`/api/orders/${orderId}/mark-paid`, { method: "POST" });
+      if (res.ok) {
+        await loadOrders();
+      }
+    } finally {
+      setMarkingPaidId(null);
+    }
+  };
 
   const totalPages = Math.ceil(totalCount / pageSize);
 
@@ -87,7 +126,7 @@ export function OrdersTable() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-3">
         <Select
-          value={typeFilter}
+          value={typeFilter || "all"}
           onValueChange={(v) => {
             setTypeFilter(v === "all" ? "" : v);
             setPage(1);
@@ -104,7 +143,7 @@ export function OrdersTable() {
           </SelectContent>
         </Select>
         <Select
-          value={statusFilter}
+          value={statusFilter || "all"}
           onValueChange={(v) => {
             setStatusFilter(v === "all" ? "" : v);
             setPage(1);
@@ -120,6 +159,25 @@ export function OrdersTable() {
             <SelectItem value="cancelled">Cancelled</SelectItem>
           </SelectContent>
         </Select>
+        <div className="flex gap-1">
+          {paymentMethodOptions.map((opt) => {
+            const active = (paymentMethodFilter || "all") === opt.value;
+            return (
+              <Button
+                key={opt.value}
+                type="button"
+                variant={active ? "default" : "outline"}
+                size="sm"
+                onClick={() => {
+                  setPaymentMethodFilter(opt.value === "all" ? "" : opt.value);
+                  setPage(1);
+                }}
+              >
+                {opt.label}
+              </Button>
+            );
+          })}
+        </div>
         <div className="flex-1" />
         {canCreate && (
           <Button onClick={() => setWizardOpen(true)}>
@@ -136,52 +194,95 @@ export function OrdersTable() {
               <TableHead>Reference</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Payment</TableHead>
               <TableHead>Supplier</TableHead>
               <TableHead>Items</TableHead>
               <TableHead>Created</TableHead>
-              <TableHead className="w-[80px]">Actions</TableHead>
+              <TableHead className="w-[140px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {orders.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center text-muted-foreground">
+                <TableCell colSpan={8} className="text-center text-muted-foreground">
                   No orders found.
                 </TableCell>
               </TableRow>
             ) : (
-              orders.map((order) => (
-                <TableRow key={order.id}>
-                  <TableCell className="font-medium">
-                    {order.reference_number || order.id.slice(0, 8)}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={typeBadgeVariant[order.type]} className="capitalize">
-                      {order.type}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={statusBadgeVariant[order.status]} className="capitalize">
-                      {order.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{order.supplier?.name ?? "—"}</TableCell>
-                  <TableCell>{order.order_items?.length ?? 0} item(s)</TableCell>
-                  <TableCell>
-                    {new Date(order.created_at).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="h-8 w-8"
-                      onClick={() => setDetailOrder(order)}
-                    >
-                      <Eye className="h-3.5 w-3.5" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
+              orders.map((order) => {
+                const canMarkPaid =
+                  canManagePayments &&
+                  order.payment_method === "bank_transfer" &&
+                  order.payment_status === "pending";
+                return (
+                  <TableRow key={order.id}>
+                    <TableCell className="font-medium">
+                      {order.reference_number || order.id.slice(0, 8)}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={typeBadgeVariant[order.type]} className="capitalize">
+                        {order.type}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={statusBadgeVariant[order.status]} className="capitalize">
+                        {order.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {order.payment_method ? (
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-xs capitalize">
+                            {order.payment_method.replace("_", " ")}
+                          </span>
+                          <span
+                            className={
+                              order.payment_status === "paid"
+                                ? "text-xs text-green-600"
+                                : order.payment_status === "failed"
+                                  ? "text-xs text-red-600"
+                                  : "text-xs text-muted-foreground"
+                            }
+                          >
+                            {order.payment_status}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell>{order.supplier?.name ?? "—"}</TableCell>
+                    <TableCell>{order.order_items?.length ?? 0} item(s)</TableCell>
+                    <TableCell>
+                      {new Date(order.created_at).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        {canMarkPaid && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8"
+                            disabled={markingPaidId === order.id}
+                            onClick={() => markAsPaid(order.id)}
+                          >
+                            <CheckCircle2 className="mr-1 h-3.5 w-3.5" />
+                            {markingPaidId === order.id ? "..." : "Mark paid"}
+                          </Button>
+                        )}
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8"
+                          onClick={() => setDetailOrder(order)}
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>
@@ -217,7 +318,7 @@ export function OrdersTable() {
         <OrderWizard
           open={wizardOpen}
           onOpenChange={setWizardOpen}
-          onSuccess={reloadOrders}
+          onSuccess={loadOrders}
         />
       )}
 
@@ -228,7 +329,7 @@ export function OrdersTable() {
             if (!open) setDetailOrder(null);
           }}
           order={detailOrder}
-          onSuccess={reloadOrders}
+          onSuccess={loadOrders}
         />
       )}
     </div>

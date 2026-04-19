@@ -4,6 +4,7 @@ import { useCurrentUser } from "@/lib/hooks/use-current-user";
 import { StatCards } from "@/components/dashboard/stat-cards";
 import { LowStockAlerts } from "@/components/dashboard/low-stock-alerts";
 import { StockChart } from "@/components/dashboard/stock-chart";
+import { AdminWidgets } from "@/components/dashboard/admin-widgets";
 
 export default function DashboardPage() {
   const { profile, isLoading } = useCurrentUser();
@@ -16,6 +17,8 @@ export default function DashboardPage() {
     );
   }
 
+  const isManagerOrAdmin = profile?.role === "admin" || profile?.role === "manager";
+
   return (
     <div className="space-y-6">
       <div>
@@ -26,6 +29,8 @@ export default function DashboardPage() {
       </div>
 
       <StatCards />
+
+      {isManagerOrAdmin && <AdminWidgets />}
 
       <div className="grid gap-6 lg:grid-cols-2">
         <StockChart />

@@ -7,6 +7,8 @@ export const GET = withAuth(async (request, { supabase }) => {
   const { searchParams } = new URL(request.url);
   const type = searchParams.get("type");
   const status = searchParams.get("status");
+  const paymentMethod = searchParams.get("payment_method");
+  const paymentStatus = searchParams.get("payment_status");
   const page = parseInt(searchParams.get("page") || "1");
   const pageSize = parseInt(searchParams.get("pageSize") || "20");
 
@@ -19,6 +21,12 @@ export const GET = withAuth(async (request, { supabase }) => {
 
   if (type) query = query.eq("type", type);
   if (status) query = query.eq("status", status);
+  if (paymentMethod && ["cod", "bank_transfer", "card"].includes(paymentMethod)) {
+    query = query.eq("payment_method", paymentMethod);
+  }
+  if (paymentStatus && ["pending", "paid", "failed"].includes(paymentStatus)) {
+    query = query.eq("payment_status", paymentStatus);
+  }
 
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
