@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     .select()
     .maybeSingle();
 
-  if (error && !error.message.includes("duplicate")) {
+  if (error && error.code !== "23505") {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
