@@ -1,6 +1,20 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+/**
+ * Admin-area page prefixes that require an authenticated user.
+ * All other routes (shop pages, public APIs) are served to guests.
+ * API routes enforce their own authorization via Supabase RLS.
+ */
+const ADMIN_PAGE_PREFIXES = [
+  "/dashboard",
+  "/inventory",
+  "/orders", // admin orders list (customer confirmation is at /order/[id])
+  "/pos",
+  "/settings",
+  "/suppliers",
+];
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -29,22 +43,17 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Public routes that don't require auth
-  const publicRoutes = ["/login", "/api/auth/callback", "/shop"];
-  const isPublicRoute =
-    request.nextUrl.pathname === "/" ||
-    publicRoutes.some((route) =>
-      request.nextUrl.pathname.startsWith(route)
-    );
+  const pathname = request.nextUrl.pathname;
+  const isAdminPage = ADMIN_PAGE_PREFIXES.some((p) => pathname.startsWith(p));
 
-  if (!user && !isPublicRoute) {
+  if (!user && isAdminPage) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  // If user is logged in and tries to access login page, redirect to dashboard
-  if (user && request.nextUrl.pathname === "/login") {
+  // If a logged-in user visits /login, send them to the dashboard
+  if (user && pathname === "/login") {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);
