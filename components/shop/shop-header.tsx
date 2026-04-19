@@ -1,9 +1,10 @@
 "use client";
 import Link from "next/link";
-import { Heart, User, ShoppingBag } from "lucide-react";
+import { Heart, User } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { CategoryMegaMenu } from "@/components/shop/category-mega-menu";
 import { ShopSearchBar } from "@/components/shop/shop-search-bar";
+import { HeaderCartButton } from "@/components/shop/header-cart-button";
 
 export function ShopHeader() {
   return (
@@ -23,9 +24,7 @@ export function ShopHeader() {
           <Link href="/account" aria-label="Account" className="p-2 rounded-md hover:bg-muted">
             <User className="h-4 w-4" />
           </Link>
-          <Link href="/cart" aria-label="Cart" className="p-2 rounded-md hover:bg-muted">
-            <ShoppingBag className="h-4 w-4" />
-          </Link>
+          <HeaderCartButton />
           <ThemeToggle />
         </nav>
       </div>
