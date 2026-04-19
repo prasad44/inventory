@@ -8,6 +8,7 @@ import { createClient as createServiceClient, SupabaseClient } from "@supabase/s
 import { cookies } from "next/headers";
 import { computeDeliveryDates, computeDeliveryFee } from "@/lib/delivery";
 import { effectivePrice } from "@/lib/format";
+import { STORE_SETTINGS } from "@/lib/settings";
 
 interface CheckoutBody {
   contact?: {
@@ -114,7 +115,7 @@ export async function POST(req: NextRequest) {
     };
   });
   const subtotal = lineSnapshots.reduce((s, l) => s + l.unit_price * l.quantity, 0);
-  const deliveryFee = computeDeliveryFee(zoneFee, subtotal);
+  const deliveryFee = computeDeliveryFee(zoneFee, subtotal, STORE_SETTINGS.freeDeliveryThresholdLKR);
 
   const minDays = zone?.est_min_days ?? 2;
   const maxDays = zone?.est_max_days ?? 5;
