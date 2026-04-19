@@ -29,6 +29,16 @@ export async function GET(req: NextRequest) {
     query = query.in("category_id", ids);
   }
 
+  // Explicit IDs (used by compare page)
+  const idsCsv = searchParams.get("ids");
+  if (idsCsv) {
+    const idList = idsCsv.split(",").map((s) => s.trim()).filter(Boolean);
+    if (idList.length === 0) {
+      return NextResponse.json({ data: [], count: 0, page: 1, pageSize: 24 });
+    }
+    query = query.in("id", idList);
+  }
+
   // Brand multi-select
   const brandCsv = searchParams.get("brand");
   if (brandCsv) {

@@ -1,64 +1,74 @@
+"use client";
+
+import { use, useEffect, useState } from "react";
 import { notFound } from "next/navigation";
-import { createPublicServerClient } from "@/lib/supabase/public-server";
 import { CategoryBrowser } from "@/components/shop/category-browser";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import type { Category } from "@/lib/types";
 
-export const dynamic = "force-dynamic";
-export const maxDuration = 30;
+interface Payload {
+  category: Category;
+  parent: Pick<Category, "name" | "slug"> | null;
+  availableBrands: string[];
+}
 
-export default async function SubCategoryPage({
+export default function SubCategoryPage({
   params,
 }: {
   params: Promise<{ parent: string; child: string }>;
 }) {
-  const { parent: parentSlug, child: childSlug } = await params;
-  const supabase = createPublicServerClient();
+  const { parent: parentSlug, child: childSlug } = use(params);
+  const [data, setData] = useState<Payload | null>(null);
+  const [notFoundFlag, setNotFoundFlag] = useState(false);
 
-  const { data: parent } = await supabase
-    .from("categories")
-    .select("*")
-    .eq("slug", parentSlug)
-    .is("parent_id", null)
-    .maybeSingle();
+  useEffect(() => {
+    let alive = true;
+    fetch(
+      `/api/category-page/${encodeURIComponent(childSlug)}?parent=${encodeURIComponent(parentSlug)}`
+    )
+      .then(async (r) => {
+        if (r.status === 404) {
+          if (alive) setNotFoundFlag(true);
+          return null;
+        }
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((j) => {
+        if (!alive || !j) return;
+        setData(j as Payload);
+      })
+      .catch(() => alive && setNotFoundFlag(true));
+    return () => {
+      alive = false;
+    };
+  }, [parentSlug, childSlug]);
 
-  if (!parent) notFound();
-
-  const { data: child } = await supabase
-    .from("categories")
-    .select("*")
-    .eq("slug", childSlug)
-    .eq("parent_id", parent.id)
-    .maybeSingle();
-
-  if (!child) notFound();
-
-  // Sub-categories generally have no children; pass empty.
-  const crumbs = [
-    { label: "Home", href: "/" },
-    { label: parent.name, href: `/c/${parent.slug}` },
-    { label: child.name },
-  ];
-
-  // For sub-categories, show available brands from the sub-category only
-  const { data: productsForBrandScan } = await supabase
-    .from("products")
-    .select("brand")
-    .eq("status", "active")
-    .eq("category_id", child.id)
-    .not("brand", "is", null);
-  const availableBrands = Array.from(
-    new Set((productsForBrandScan ?? []).map((r) => r.brand as string).filter(Boolean))
-  ).sort();
+  if (notFoundFlag) notFound();
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
-      <Breadcrumbs items={crumbs} className="mb-4" />
-      <CategoryBrowser
-        category={child as Category}
-        childrenCategories={[]}
-        availableBrands={availableBrands}
+      <Breadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          data?.parent
+            ? { label: data.parent.name, href: `/c/${data.parent.slug}` }
+            : { label: parentSlug, href: `/c/${parentSlug}` },
+          { label: data?.category.name ?? "Loading..." },
+        ]}
+        className="mb-4"
       />
+      {data ? (
+        <CategoryBrowser
+          category={data.category}
+          childrenCategories={[]}
+          availableBrands={data.availableBrands}
+        />
+      ) : (
+        <div className="h-64 grid place-items-center text-muted-foreground text-sm">
+          Loading...
+        </div>
+      )}
     </div>
   );
 }

@@ -1,40 +1,51 @@
-import { createPublicServerClient } from "@/lib/supabase/public-server";
+"use client";
+
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import { GenericProductsBrowser } from "@/components/shop/generic-products-browser";
 
-export const dynamic = "force-dynamic";
-export const maxDuration = 30;
-
-export default async function SearchPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string }>;
-}) {
-  const { q } = await searchParams;
-  const supabase = createPublicServerClient();
-
-  // Build brand list from products that match the current q (best-effort;
-  // keeps the filter rail useful when refining a search).
-  let availableBrands: string[] = [];
-  if (q && q.trim().length >= 2) {
-    const like = `%${q.trim()}%`;
-    const { data } = await supabase
-      .from("products")
-      .select("brand")
-      .eq("status", "active")
-      .or(`name.ilike.${like},brand.ilike.${like}`)
-      .not("brand", "is", null)
-      .limit(200);
-    const set = new Set<string>();
-    for (const r of data ?? []) {
-      const b = (r as { brand: string | null }).brand;
-      if (b) set.add(b);
-    }
-    availableBrands = Array.from(set).sort();
-  }
-
+export default function SearchPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
+      <Suspense
+        fallback={
+          <div className="h-64 grid place-items-center text-muted-foreground text-sm">
+            Loading...
+          </div>
+        }
+      >
+        <SearchInner />
+      </Suspense>
+    </div>
+  );
+}
+
+function SearchInner() {
+  const searchParams = useSearchParams();
+  const q = searchParams.get("q")?.trim() ?? "";
+  const [availableBrands, setAvailableBrands] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (q.length < 2) {
+      setAvailableBrands([]);
+      return;
+    }
+    let alive = true;
+    fetch(`/api/search-page?q=${encodeURIComponent(q)}`)
+      .then((r) => (r.ok ? r.json() : { availableBrands: [] }))
+      .then((j) => {
+        if (!alive) return;
+        setAvailableBrands((j.availableBrands ?? []) as string[]);
+      })
+      .catch(() => alive && setAvailableBrands([]));
+    return () => {
+      alive = false;
+    };
+  }, [q]);
+
+  return (
+    <>
       <Breadcrumbs
         items={[
           { label: "Home", href: "/" },
@@ -43,10 +54,10 @@ export default async function SearchPage({
         ]}
         className="mb-4"
       />
-      {q && q.trim() ? (
+      {q ? (
         <GenericProductsBrowser
-          heading={`Search: "${q.trim()}"`}
-          baseQuery={{ q: q.trim() }}
+          heading={`Search: "${q}"`}
+          baseQuery={{ q }}
           availableBrands={availableBrands}
         />
       ) : (
@@ -57,6 +68,6 @@ export default async function SearchPage({
           </p>
         </div>
       )}
-    </div>
+    </>
   );
 }

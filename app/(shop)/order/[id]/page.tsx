@@ -1,14 +1,13 @@
+"use client";
+
+import { use, useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Check, Truck, Banknote, Building2 } from "lucide-react";
-import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { formatLKR } from "@/lib/format";
 import { STORE_SETTINGS } from "@/lib/settings";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import type { Product } from "@/lib/types";
-
-export const dynamic = "force-dynamic";
-export const maxDuration = 30;
 
 interface OrderRow {
   id: string;
@@ -32,35 +31,50 @@ interface OrderRow {
   }>;
 }
 
-export default async function OrderPage({
+export default function OrderPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
+  const { id } = use(params);
+  const [order, setOrder] = useState<OrderRow | null>(null);
+  const [notFoundFlag, setNotFoundFlag] = useState(false);
 
-  // Use service client to read order (RLS may block guest reads by id)
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) notFound();
-  const svc = createServiceClient(url, key, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
+  useEffect(() => {
+    let alive = true;
+    fetch(`/api/order/${encodeURIComponent(id)}`)
+      .then(async (r) => {
+        if (r.status === 404) {
+          if (alive) setNotFoundFlag(true);
+          return null;
+        }
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((j) => {
+        if (!alive || !j) return;
+        setOrder(j.order as OrderRow);
+      })
+      .catch(() => alive && setNotFoundFlag(true));
+    return () => {
+      alive = false;
+    };
+  }, [id]);
 
-  const { data } = await svc
-    .from("orders")
-    .select(
-      "*, items:order_items(id, quantity, unit_price, discount_pct_snapshot, product:products(*))"
-    )
-    .eq("id", id)
-    .maybeSingle();
+  if (notFoundFlag) notFound();
 
-  if (!data) notFound();
-
-  const order = data as unknown as OrderRow;
+  if (!order) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-6">
+        <div className="h-32 grid place-items-center text-muted-foreground text-sm">
+          Loading your order...
+        </div>
+      </div>
+    );
+  }
 
   const subtotal = order.items.reduce((s, i) => s + i.unit_price * i.quantity, 0);
-  const total = subtotal + (Number(order.delivery_fee) ?? 0);
+  const total = subtotal + (Number(order.delivery_fee) || 0);
 
   const shortId = order.id.slice(0, 8).toUpperCase();
   const orderRef = `ORDER-${shortId}`;
