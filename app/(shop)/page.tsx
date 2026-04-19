@@ -3,6 +3,7 @@ import { CategoryTiles } from "@/components/shop/category-tiles";
 import { FlashDealsStrip } from "@/components/shop/flash-deals-strip";
 import { FeaturedBrandsRow } from "@/components/shop/featured-brands-row";
 import { ProductRail } from "@/components/shop/product-rail";
+import { RecentlyViewedRail } from "@/components/shop/recently-viewed-rail";
 import { ValuePropsStrip } from "@/components/shop/value-props-strip";
 import { createClient } from "@/lib/supabase/server";
 import type { Category } from "@/lib/types";
@@ -24,6 +25,7 @@ export default async function HomePage() {
       <ProductRail title="Trending in Audio" categorySlug="audio" />
       <ProductRail title="Trending in Lighting" categorySlug="lighting" />
       <ProductRail title="Shop solar" categorySlug="solar" />
+      <RecentlyViewedRail />
       <ValuePropsStrip />
     </div>
   );
