@@ -7,10 +7,14 @@ import { NextResponse, type NextRequest } from "next/server";
  * API routes enforce their own authorization via Supabase RLS.
  */
 const ADMIN_PAGE_PREFIXES = [
+  "/brands",
   "/dashboard",
+  "/delivery-zones",
+  "/flash-deals",
   "/inventory",
   "/orders", // admin orders list (customer confirmation is at /order/[id])
   "/pos",
+  "/reviews",
   "/settings",
   "/suppliers",
 ];

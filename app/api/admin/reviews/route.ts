@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { requireRole } from "@/lib/auth-guard";
 
 export async function GET(req: NextRequest) {
   const status = new URL(req.url).searchParams.get("status");
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+  const gate = await requireRole(supabase, "manager");
+  if (!gate.ok) return NextResponse.json({ error: gate.error }, { status: gate.status });
   let q = supabase
     .from("reviews")
     .select("*, product:products(id, name, slug), user:profiles(full_name)")
@@ -27,8 +28,8 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "invalid status" }, { status: 400 });
   }
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+  const gate = await requireRole(supabase, "manager");
+  if (!gate.ok) return NextResponse.json({ error: gate.error }, { status: gate.status });
   const { error } = await supabase.from("reviews").update({ status }).eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });

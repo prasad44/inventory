@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { requireRole } from "@/lib/auth-guard";
 
 export async function GET() {
   const supabase = await createClient();
+  const gate = await requireRole(supabase, "manager");
+  if (!gate.ok) return NextResponse.json({ error: gate.error }, { status: gate.status });
   const { data, error } = await supabase
     .from("brands")
     .select("id, name, slug, is_featured, sort_order, description, logo_url, created_at")
@@ -17,8 +20,8 @@ export async function POST(req: NextRequest) {
   if (!name) return NextResponse.json({ error: "name required" }, { status: 400 });
 
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+  const gate = await requireRole(supabase, "manager");
+  if (!gate.ok) return NextResponse.json({ error: gate.error }, { status: gate.status });
 
   const slug =
     typeof body?.slug === "string" && body.slug.trim()
@@ -53,8 +56,8 @@ export async function PATCH(req: NextRequest) {
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
 
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+  const gate = await requireRole(supabase, "manager");
+  if (!gate.ok) return NextResponse.json({ error: gate.error }, { status: gate.status });
 
   const updates: Record<string, unknown> = {};
   if (typeof body.name === "string") updates.name = body.name.trim();
@@ -82,8 +85,8 @@ export async function DELETE(req: NextRequest) {
   const id = new URL(req.url).searchParams.get("id");
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+  const gate = await requireRole(supabase, "manager");
+  if (!gate.ok) return NextResponse.json({ error: gate.error }, { status: gate.status });
   const { error } = await supabase.from("brands").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });
