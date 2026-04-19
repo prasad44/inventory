@@ -1,7 +1,7 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
-import { notFound } from "next/navigation";
+import { useEffect, useState } from "react";
+import { notFound, useParams } from "next/navigation";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import { ProductGallery } from "@/components/shop/product-gallery";
 import { ProductInfoPanel } from "@/components/shop/product-info-panel";
@@ -22,12 +22,8 @@ interface Payload {
   recommendations: Product[];
 }
 
-export default function ProductPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = use(params);
+export default function ProductPage() {
+  const { slug } = useParams<{ slug: string }>();
   const [data, setData] = useState<Payload | null>(null);
   const [notFoundFlag, setNotFoundFlag] = useState(false);
 

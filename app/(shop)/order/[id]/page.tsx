@@ -1,7 +1,7 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
-import { notFound } from "next/navigation";
+import { useEffect, useState } from "react";
+import { notFound, useParams } from "next/navigation";
 import Link from "next/link";
 import { Check, Truck, Banknote, Building2 } from "lucide-react";
 import { formatLKR } from "@/lib/format";
@@ -31,12 +31,8 @@ interface OrderRow {
   }>;
 }
 
-export default function OrderPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
+export default function OrderPage() {
+  const { id } = useParams<{ id: string }>();
   const [order, setOrder] = useState<OrderRow | null>(null);
   const [notFoundFlag, setNotFoundFlag] = useState(false);
 

@@ -1,17 +1,13 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
-import { notFound } from "next/navigation";
+import { useEffect, useState } from "react";
+import { notFound, useParams } from "next/navigation";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import { GenericProductsBrowser } from "@/components/shop/generic-products-browser";
 import type { Brand } from "@/lib/types";
 
-export default function BrandPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = use(params);
+export default function BrandPage() {
+  const { slug } = useParams<{ slug: string }>();
   const [brand, setBrand] = useState<Brand | null>(null);
   const [notFoundFlag, setNotFoundFlag] = useState(false);
 

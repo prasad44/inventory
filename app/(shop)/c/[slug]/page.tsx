@@ -1,7 +1,7 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
-import { notFound } from "next/navigation";
+import { useEffect, useState } from "react";
+import { notFound, useParams } from "next/navigation";
 import { CategoryBrowser } from "@/components/shop/category-browser";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import type { Category } from "@/lib/types";
@@ -12,12 +12,8 @@ interface Payload {
   availableBrands: string[];
 }
 
-export default function CategoryPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = use(params);
+export default function CategoryPage() {
+  const { slug } = useParams<{ slug: string }>();
   const [data, setData] = useState<Payload | null>(null);
   const [notFoundFlag, setNotFoundFlag] = useState(false);
 
