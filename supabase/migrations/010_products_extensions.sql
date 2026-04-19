@@ -14,7 +14,7 @@ alter table products
 
 -- Backfill slugs for any existing rows
 update products
-set slug = lower(regexp_replace(name || '-' || substr(id::text, 1, 6), '[^a-z0-9]+', '-', 'g'))
+set slug = lower(regexp_replace(name || '-' || substr(id::text, 1, 6), '[^a-zA-Z0-9]+', '-', 'g'))
 where slug is null;
 
 alter table products alter column slug set not null;
