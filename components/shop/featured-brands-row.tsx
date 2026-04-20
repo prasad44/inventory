@@ -13,7 +13,7 @@ export function FeaturedBrandsRow({ brands }: Props) {
       <div className="flex items-end justify-between mb-4">
         <h2 className="font-display text-xl md:text-2xl font-bold">Shop by brand</h2>
       </div>
-      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
         {brands.map((b) => (
           <Link
             key={b.id}

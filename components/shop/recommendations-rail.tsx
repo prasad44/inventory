@@ -54,7 +54,7 @@ export async function RecommendationsRail({
           <ArrowRight className="h-3 w-3" />
         </Link>
       </div>
-      <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 scrollbar-none">
+      <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 scrollbar-thin">
         {items.map((p) => (
           <div
             key={p.id}

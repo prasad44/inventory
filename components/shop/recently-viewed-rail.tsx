@@ -57,7 +57,7 @@ export function RecentlyViewedRail() {
           <ArrowRight className="h-3 w-3" />
         </Link>
       </div>
-      <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 scrollbar-none">
+      <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 scrollbar-thin">
         {withProduct.map((i) => (
           <div key={i.product_id} className="shrink-0 w-[200px] sm:w-[220px] snap-start">
             <ProductCard product={i.product} />
