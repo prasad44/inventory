@@ -125,3 +125,12 @@
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
 }
+
+/* Hide native scrollbar on horizontal rails; card-peek on the edge signals scrollability */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
