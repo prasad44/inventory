@@ -29,11 +29,12 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
 
--- 3. Insert profile for existing admin user (skip if already exists)
+-- 3. Promote the original admin user to 'admin' — but only if that auth
+--    user actually exists (guarded so this is a no-op on a fresh project
+--    where the old user id is absent, avoiding a profiles_id_fkey violation).
 insert into public.profiles (id, full_name, role)
-values (
-  '0549e42b-eef3-48f6-91ce-2f25ea36d341',
-  'Admin',
-  'admin'
+select '0549e42b-eef3-48f6-91ce-2f25ea36d341', 'Admin', 'admin'
+where exists (
+  select 1 from auth.users where id = '0549e42b-eef3-48f6-91ce-2f25ea36d341'
 )
 on conflict (id) do update set role = 'admin';
